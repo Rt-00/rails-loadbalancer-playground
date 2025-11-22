@@ -1,24 +1,33 @@
-# README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+# Rails Load Balancer Playground
 
-Things you may want to cover:
+Um pequeno experimento com **Ruby on Rails**, **Docker**, **Nginx** e **Redis** para demonstrar:
 
-* Ruby version
+* múltiplas instâncias Rails rodando em paralelo
+* balanceamento de carga via Nginx
+* estado compartilhado usando Redis
+* identificação de cada instância e contagem de hits no endpoint `/status`
 
-* System dependencies
+## Executando
 
-* Configuration
+```sh
+docker compose up --build
+```
 
-* Database creation
+Acesse o load balancer:
 
-* Database initialization
+```
+http://localhost:8080/status
+```
 
-* How to run the test suite
+A resposta inclui o ID da instância, o número de requisições atendidas por ela e o total global acumulado no Redis.
 
-* Services (job queues, cache servers, search engines, etc.)
+## Estrutura
 
-* Deployment instructions
+* **app1 / app2**: duas instâncias Rails idênticas, diferenciadas por `INSTANCE_ID`.
+* **redis**: armazenamento compartilhado para contadores.
+* **nginx**: distribui requisições entre app1 e app2.
 
-* ...
+## Objetivo
+
+Servir como um laboratório simples para entender como aplicações Rails podem ser escaladas horizontalmente e compartilhar estado via Redis.
