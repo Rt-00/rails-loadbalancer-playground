@@ -1,0 +1,46 @@
+services:
+  app1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY_BASE: 1971cbb9c24fa927dcf44a6c772279442de3306f86d1710fa2a9d05d7a2d451b0a79860ed26bd5ca78996c19ed1eba8aaba65da1a965deacc054b2a2793396e4
+      PORT: 3000
+    depends_on:
+      - redis
+    networks:
+      - appnet
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY_BASE: 1971cbb9c24fa927dcf44a6c772279442de3306f86d1710fa2a9d05d7a2d451b0a79860ed26bd5ca78996c19ed1eba8aaba65da1a965deacc054b2a2793396e4
+      PORT: 3000
+    depends_on:
+      - redis
+    networks:
+      - appnet
+
+  redis:
+    image: redis:7
+    networks:
+      - appnet
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app1
+      - app2
+    networks:
+      - appnet
+
+networks:
+  appnet:
